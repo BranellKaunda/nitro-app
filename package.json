@@ -1,0 +1,18 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite dev",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0",
+    "nitro": "latest",
+    "vite": "latest"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.3.2",
+    "jiti": "^2.6.1",
+    "pg": "^8.20.0"
+  }
+}
