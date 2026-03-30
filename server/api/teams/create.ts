@@ -3,11 +3,10 @@ import { useDatabase } from "nitro/database";
 
 export default defineHandler(async (event) => {
   const db = useDatabase();
-
-  const club = "Barcelona";
-  const logo = "img11.png";
-  const location = "Madrid";
+  const club = "barcelona";
+  const logo = "img12.png";
+  const location = "barcelona";
 
   await db.sql`INSERT INTO teams (name, logo, location) VALUES (${club}, ${logo}, ${location})`;
-  return { api: "works init!" };
+  return { api: "it worked!" };
 });
