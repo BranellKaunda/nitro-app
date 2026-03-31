@@ -1,12 +1,12 @@
-import { defineHandler } from "nitro";
 import { useDatabase } from "nitro/database";
+import { defineHandler } from "nitro";
 
 export default defineHandler(async (event) => {
   const db = useDatabase();
   const body = await event.req.json();
-  const { name, logo, location } = body;
+  const { name, season, rank } = body;
 
-  await db.sql`INSERT INTO teams (name, logo, location) VALUES (${name}, ${logo}, ${location})`;
+  await db.sql`INSERT INTO leagues (name, season, rank) VALUES (${name}, ${season}, ${rank})`;
 
   return { success: true };
 });
