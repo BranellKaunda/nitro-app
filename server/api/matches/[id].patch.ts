@@ -2,28 +2,19 @@ import { useDatabase } from "nitro/database";
 import { defineHandler } from "nitro";
 import { readValidatedBody } from "h3";
 import * as z from "zod";
+import { capitalize } from "es-toolkit";
 
-const firstLetterUpperCase = z
-  .string()
-  .min(2)
-  .transform((val) =>
-    val
-      .split(" ")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" "),
-  );
-
-const matcheschema = z.object({
+const matcheSchema = z.object({
   homeTeamId: z.number().int().positive(),
   awayTeamId: z.number().int().positive(),
   homeTeamGoals: z.number().int(),
   awayTeamGoals: z.number().int(),
   matchDate: z.coerce.date(),
-  status: firstLetterUpperCase,
+  status: z.string().min(2).transform(capitalize),
   competitionId: z.number().int().positive(),
 });
 
-const patchMatches = matcheschema.partial();
+const patchMatches = matcheSchema.partial();
 
 export default defineHandler(async (event) => {
   const db = useDatabase();

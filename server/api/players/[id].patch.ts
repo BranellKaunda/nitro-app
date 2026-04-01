@@ -2,23 +2,14 @@ import { useDatabase } from "nitro/database";
 import { defineHandler } from "nitro";
 import { readValidatedBody } from "h3";
 import * as z from "zod";
-
-const firstLetterUpperCase = z
-  .string()
-  .min(2)
-  .transform((val) =>
-    val
-      .split(" ")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" "),
-  );
+import { capitalize } from "es-toolkit/string";
 
 const playerSchema = z.object({
   teamId: z.int().positive(),
-  firstName: firstLetterUpperCase,
-  lastName: firstLetterUpperCase,
+  firstName: z.string().min(2).transform(capitalize),
+  lastName: z.string().min(2).transform(capitalize),
   dob: z.coerce.date(),
-  position: firstLetterUpperCase,
+  position: z.string().min(7).transform(capitalize),
   weightKg: z.int().positive(),
   heightCm: z.int().positive(),
 });

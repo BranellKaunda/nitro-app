@@ -2,19 +2,10 @@ import { useDatabase } from "nitro/database";
 import { defineHandler } from "nitro";
 import { readValidatedBody } from "h3";
 import * as z from "zod";
-
-const firstLetterUpperCase = z
-  .string()
-  .min(2)
-  .transform((val) =>
-    val
-      .split(" ")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" "),
-  );
+import { capitalize } from "es-toolkit";
 
 const leagueSchema = z.object({
-  name: firstLetterUpperCase,
+  name: z.string().min(3).max(50).transform(capitalize),
   season: z.string().min(7).max(9),
   rank: z.number().positive(),
 });

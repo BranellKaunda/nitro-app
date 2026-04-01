@@ -2,21 +2,12 @@ import { defineHandler } from "nitro";
 import { useDatabase } from "nitro/database";
 import { readValidatedBody } from "h3";
 import * as z from "zod";
-
-const firstLetterUpperCase = z
-  .string()
-  .min(2)
-  .transform((val) =>
-    val
-      .split(" ")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" "),
-  );
+import { capitalize } from "es-toolkit/string";
 
 const teamSchema = z.object({
-  name: firstLetterUpperCase,
+  name: z.string().min(2).transform(capitalize),
   logo: z.string(),
-  location: firstLetterUpperCase,
+  location: z.string().min(2).transform(capitalize),
 });
 
 const patchTeamSchema = teamSchema.partial();
