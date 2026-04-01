@@ -1,9 +1,33 @@
 import { useDatabase } from "nitro/database";
 import { defineHandler } from "nitro";
+import { readValidatedBody } from "h3";
+import * as z from "zod";
+
+const firstLetterUpperCase = z
+  .string()
+  .min(2)
+  .transform((val) =>
+    val
+      .split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" "),
+  );
+
+const matcheschema = z.object({
+  homeTeamId: z.number().int().positive(),
+  awayTeamId: z.number().int().positive(),
+  homeTeamGoals: z.number().int(),
+  awayTeamGoals: z.number().int(),
+  matchDate: z.coerce.date(),
+  status: firstLetterUpperCase,
+  competitionId: z.number().int().positive(),
+});
+
+const patchMatches = matcheschema.partial();
 
 export default defineHandler(async (event) => {
   const db = useDatabase();
-  const body = await event.req.json();
+  const body = await readValidatedBody(event, patchMatches);
   const id = event.context.params?.id;
   const {
     homeTeamId,
@@ -36,7 +60,7 @@ export default defineHandler(async (event) => {
   }
 
   if (matchDate) {
-    await db.sql`UPDATE matches SET match_date = ${matchDate} WHERE id = ${id}`;
+    await db.sql`UPDATE matches SET match_date = ${matchDate.toISOString()} WHERE id = ${id}`;
   }
 
   if (competitionId) {
