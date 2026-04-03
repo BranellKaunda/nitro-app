@@ -1,8 +1,7 @@
 import { defineHandler } from "nitro";
-import { useDatabase } from "nitro/database";
+import { useDrizzle } from "~/server/utils/drizzle";
 
 export default defineHandler(async (event) => {
-  const db = useDatabase();
-  const players = await db.sql`SELECT * FROM players`;
+  const players = await useDrizzle().query.players.findMany();
   return players;
 });

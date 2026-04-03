@@ -1,50 +1,21 @@
-import { useDatabase } from "nitro/database";
 import { defineHandler } from "nitro";
 import { readValidatedBody } from "h3";
-import * as z from "zod";
-import { capitalize } from "es-toolkit/string";
+import { useDrizzle } from "~/server/utils/drizzle";
+import { players } from "~/server/database/schema";
+import { eq } from "drizzle-orm";
+import { playerSchema } from "~/server/utils/playerSchema";
 
-const playerSchema = z.object({
-  teamId: z.int().positive(),
-  firstName: z.string().min(2).transform(capitalize),
-  lastName: z.string().min(2).transform(capitalize),
-  dob: z.coerce.date(),
-  position: z.string().min(7).transform(capitalize),
-  weightKg: z.int().positive(),
-  heightCm: z.int().positive(),
-});
-
-const patchPlayerSchema = playerSchema.partial();
+const schema = playerSchema.partial();
 
 export default defineHandler(async (event) => {
-  const db = useDatabase();
-  const body = await readValidatedBody(event, patchPlayerSchema);
+  const db = useDrizzle();
+  const body = await readValidatedBody(event, schema);
   const id = event.context.params?.id;
-  const { firstName, lastName, dob, position, weightKg, heightCm } = body;
 
-  if (firstName) {
-    await db.sql`UPDATE players SET first_name = ${firstName} WHERE id = ${id}`;
-  }
-
-  if (lastName) {
-    await db.sql`UPDATE players SET last_name = ${lastName} WHERE id = ${id}`;
-  }
-
-  if (dob) {
-    await db.sql`UPDATE players SET dob = ${dob.toISOString()} WHERE id = ${id}`;
-  }
-
-  if (position) {
-    await db.sql`UPDATE players SET position = ${position} WHERE id = ${id}`;
-  }
-
-  if (weightKg) {
-    await db.sql`UPDATE players SET weight_kg = ${weightKg} WHERE id = ${id}`;
-  }
-
-  if (heightCm) {
-    await db.sql`UPDATE players SET height_cm = ${heightCm} WHERE id = ${id}`;
-  }
+  await db
+    .update(players)
+    .set({ ...body, dob: body.dob?.toISOString() })
+    .where(eq(players.id, Number(id)));
 
   return { success: true };
 });

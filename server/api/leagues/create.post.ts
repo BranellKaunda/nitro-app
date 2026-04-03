@@ -1,8 +1,9 @@
-import { useDatabase } from "nitro/database";
+import { useDrizzle } from "~/server/utils/drizzle";
 import { defineHandler } from "nitro";
 import { readValidatedBody } from "h3";
 import * as z from "zod";
 import { capitalize } from "es-toolkit";
+import { leagues } from "~/server/database/schema";
 
 const leagueSchema = z.object({
   name: z.string().min(3).max(50).transform(capitalize),
@@ -11,11 +12,10 @@ const leagueSchema = z.object({
 });
 
 export default defineHandler(async (event) => {
-  const db = useDatabase();
+  const db = useDrizzle();
   const body = await readValidatedBody(event, leagueSchema);
-  const { name, season, rank } = body;
 
-  await db.sql`INSERT INTO leagues (name, season, rank) VALUES (${name}, ${season}, ${rank})`;
+  await db.insert(leagues).values(body);
 
   return { success: true };
 });

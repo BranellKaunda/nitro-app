@@ -1,8 +1,10 @@
 import { defineHandler } from "nitro";
-import { useDatabase } from "nitro/database";
 import { readValidatedBody } from "h3";
 import * as z from "zod";
 import { capitalize } from "es-toolkit/string";
+import { useDrizzle } from "~/server/utils/drizzle";
+import { teams } from "~/server/database/schema";
+import { eq } from "drizzle-orm/sql/expressions/conditions";
 
 const teamSchema = z.object({
   name: z.string().min(2).transform(capitalize),
@@ -13,22 +15,14 @@ const teamSchema = z.object({
 const patchTeamSchema = teamSchema.partial();
 
 export default defineHandler(async (event) => {
-  const db = useDatabase();
+  const db = useDrizzle();
   const body = await readValidatedBody(event, patchTeamSchema);
   const id = event.context.params?.id;
-  const { name, logo, location } = body;
 
-  if (name) {
-    await db.sql`UPDATE teams SET name = ${name} WHERE id = ${id}`;
-  }
-
-  if (logo) {
-    await db.sql`UPDATE teams SET logo = ${logo} WHERE id = ${id}`;
-  }
-
-  if (location) {
-    await db.sql`UPDATE teams SET location = ${location} WHERE id = ${id}`;
-  }
+  await db
+    .update(teams)
+    .set(body)
+    .where(eq(teams.id, Number(id)));
 
   return { success: true };
 });

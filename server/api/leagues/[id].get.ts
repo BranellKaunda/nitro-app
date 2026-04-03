@@ -1,10 +1,12 @@
-import { useDatabase } from "nitro/database";
+import { useDrizzle } from "~/server/utils/drizzle";
 import { defineHandler } from "nitro";
+import { eq } from "drizzle-orm";
+import { leagues } from "~/server/database/schema";
 
 export default defineHandler(async (event) => {
-  const db = useDatabase();
   const id = event.context.params?.id;
-  const league = await db.sql`SELECT * FROM leagues WHERE id = ${id}`;
 
-  return league;
+  return await useDrizzle().query.leagues.findFirst({
+    where: eq(leagues.id, Number(id)),
+  });
 });
