@@ -7,7 +7,7 @@ import { leagues } from "~/server/database/schema";
 
 const leagueSchema = z.object({
   name: z.string().min(3).max(50).transform(capitalize),
-  season: z.string().min(7).max(9),
+  season: z.string().min(4).max(9),
   rank: z.number().positive(),
 });
 

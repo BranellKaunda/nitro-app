@@ -60,3 +60,13 @@ export const matches = pgTable("matches", {
     .notNull()
     .references(() => leagues.id),
 });
+
+export const teamsXleagues = pgTable("teams_x_leagues", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id")
+    .notNull()
+    .references(() => teams.id),
+  leagueId: integer("league_id")
+    .notNull()
+    .references(() => leagues.id),
+});
