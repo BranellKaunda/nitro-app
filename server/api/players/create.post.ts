@@ -2,7 +2,7 @@ import { defineHandler } from "nitro";
 import { readValidatedBody } from "h3";
 import { useDrizzle } from "~/server/utils/drizzle";
 import { players } from "~/server/database/schema";
-import { playerSchema } from "~/server/utils/playerSchema";
+import { playerSchema } from "~/server/utils/validation/playerSchema";
 
 const schema = playerSchema;
 

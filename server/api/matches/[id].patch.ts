@@ -3,7 +3,7 @@ import { defineHandler } from "nitro";
 import { readValidatedBody } from "h3";
 import { eq } from "drizzle-orm";
 import { matches } from "~/server/database/schema";
-import { matchSchema } from "~/server/utils/matchSchema";
+import { matchSchema } from "~/server/utils/validation/matchSchema";
 
 const schema = matchSchema.partial();
 

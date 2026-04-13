@@ -2,7 +2,7 @@ import { defineHandler } from "nitro";
 import { useDrizzle } from "~/server/utils/drizzle";
 import { readValidatedBody } from "h3";
 import { matches } from "~/server/database/schema";
-import { matchSchema } from "~/server/utils/matchSchema";
+import { matchSchema } from "~/server/utils/validation/matchSchema";
 
 const schema = matchSchema;
 

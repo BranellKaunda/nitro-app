@@ -13,6 +13,9 @@ type MatchRecord = {
 };
 
 export default defineHandler(async (event) => {
+  // 1. Get competition ID from route params
+  const id = event.context.params?.id;
+
   // 1. file path
   const filePath = path.join(process.cwd(), "data", `2025season.csv`);
 
@@ -35,6 +38,7 @@ export default defineHandler(async (event) => {
       match.date,
       match.home_goals,
       match.away_goals,
+      Number(id),
     );
 
     if (result.created) {

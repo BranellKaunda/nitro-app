@@ -7,6 +7,7 @@ export default async function createMatch(
   matchDate: string,
   homeTeamGoals: number,
   awayTeamGoals: number,
+  competitionId: number,
 ) {
   const db = useDrizzle();
 
@@ -35,6 +36,7 @@ export default async function createMatch(
         eq(m.homeTeamId, home.id),
         eq(m.awayTeamId, away.id),
         eq(m.matchDate, matchDate),
+        eq(m.competitionId, competitionId),
       ),
   });
 
@@ -48,10 +50,10 @@ export default async function createMatch(
     .values({
       homeTeamId: home.id,
       awayTeamId: away.id,
-      matchDate: matchDate,
-      homeTeamGoals: homeTeamGoals,
-      awayTeamGoals: awayTeamGoals,
-      competitionId: 1,
+      matchDate,
+      homeTeamGoals,
+      awayTeamGoals,
+      competitionId,
     })
     .returning();
 

@@ -10,7 +10,7 @@ export const matchSchema = z.object({
     "Scheduled",
     "Live",
     "Halftime",
-    "finished",
+    "Finished",
     "Postponed",
     "Cancelled",
     "Abandoned",
