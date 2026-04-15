@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   pgTable,
   pgEnum,
@@ -85,6 +86,9 @@ export const teamStats = pgTable("team_stats", {
   draws: integer("draws").default(0),
   goalsFor: integer("goals_for").default(0),
   goalsAgainst: integer("goals_against").default(0),
-  goalDifference: integer("goal_difference").default(0),
+  //goalDifference: integer("goal_difference").default(0),
+  goalDifference: integer("goal_difference").generatedAlwaysAs(
+    sql`goals_for - goals_against`,
+  ),
   points: integer("points").default(0),
 });
