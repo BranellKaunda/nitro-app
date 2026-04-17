@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import {
   pgTable,
   pgEnum,
@@ -70,25 +69,4 @@ export const teamsXleagues = pgTable("teams_x_leagues", {
   leagueId: integer("league_id")
     .notNull()
     .references(() => leagues.id),
-});
-
-export const teamStats = pgTable("team_stats", {
-  id: serial("id").primaryKey(),
-  teamId: integer("team_id")
-    .notNull()
-    .references(() => teams.id),
-  competitionId: integer("competition_id")
-    .notNull()
-    .references(() => leagues.id),
-  played: integer("played").default(0),
-  wins: integer("wins").default(0),
-  losses: integer("losses").default(0),
-  draws: integer("draws").default(0),
-  goalsFor: integer("goals_for").default(0),
-  goalsAgainst: integer("goals_against").default(0),
-  //goalDifference: integer("goal_difference").default(0),
-  goalDifference: integer("goal_difference").generatedAlwaysAs(
-    sql`goals_for - goals_against`,
-  ),
-  points: integer("points").default(0),
 });

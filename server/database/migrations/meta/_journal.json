@@ -8,6 +8,13 @@
       "when": 1776076745904,
       "tag": "0000_stiff_steel_serpent",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776354096028,
+      "tag": "0001_amazing_paibok",
+      "breakpoints": true
     }
   ]
 }

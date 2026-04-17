@@ -5,17 +5,19 @@ import { sql } from "drizzle-orm";
 
 export default defineHandler(async (event) => {
   const query = getQuery(event);
+  const teams = await useDrizzle().query.teams.findMany();
+  const leagues = await useDrizzle().query.leagues.findMany();
 
   const matches = await useDrizzle().query.matches.findMany({
     where: (m, { or, ilike, eq, gte, lte }) => {
       const totalGoals = sql`${m.homeTeamGoals} + ${m.awayTeamGoals}`;
 
       return or(
-        query.homeTeamId
-          ? eq(m.homeTeamId, Number(query.homeTeamId))
-          : undefined,
-        query.awayTeamId
-          ? eq(m.awayTeamId, Number(query.awayTeamId))
+        query.teamId
+          ? or(
+              eq(m.homeTeamId, Number(query.teamId)),
+              eq(m.awayTeamId, Number(query.teamId)),
+            )
           : undefined,
         query.homeTeamGoals
           ? eq(m.homeTeamGoals, Number(query.homeTeamGoals))
@@ -45,5 +47,37 @@ export default defineHandler(async (event) => {
     },
   });
 
-  return matches;
+  const teamMap = Object.fromEntries(teams.map((t) => [t.id, t]));
+  const leagueMap = Object.fromEntries(leagues.map((l) => [l.id, l]));
+
+  const formattedMatches = matches.map((match) => {
+    const home = teamMap[match.homeTeamId];
+    const away = teamMap[match.awayTeamId];
+    const league = leagueMap[match.competitionId];
+
+    return {
+      //...match,
+      id: match?.id,
+      date: match?.matchDate,
+      competition: {
+        id: league?.id,
+        name: league?.name,
+        season: league?.season,
+      },
+      homeTeam: {
+        id: home?.id,
+        name: home?.name,
+        logo: home?.logo,
+        goals: match?.homeTeamGoals,
+      },
+      awayTeam: {
+        id: away?.id,
+        name: away?.name,
+        logo: away?.logo,
+        goals: match?.awayTeamGoals,
+      },
+    };
+  });
+
+  return formattedMatches;
 });
