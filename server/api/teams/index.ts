@@ -5,14 +5,13 @@ import { useDrizzle } from "~/server/utils/drizzle";
 export default defineHandler(async (event) => {
   const query = getQuery(event);
 
+  const OR = [
+    query.name && { name: { ilike: `%${query.name}%` } },
+    query.location && { location: { ilike: `%${query.location}%` } },
+  ].filter(Boolean);
+
   const teams = await useDrizzle().query.teams.findMany({
-    where: (teams, { ilike, or }) =>
-      or(
-        query.name ? ilike(teams.name, `%${query.name}%`) : undefined,
-        query.location
-          ? ilike(teams.location, `%${query.location}%`)
-          : undefined,
-      ),
+    where: { OR: OR as any },
   });
 
   return teams;

@@ -4,13 +4,21 @@ import { getQuery } from "h3";
 
 export default defineHandler(async (event) => {
   const query = getQuery(event);
+
   const leagues = await useDrizzle().query.leagues.findMany({
-    where: (league, { ilike, eq, or }) => {
-      return or(
-        query.name ? ilike(league.name, `%${query.name}%`) : undefined,
-        query.season ? eq(league.season, query.season) : undefined,
-        query.rank ? eq(league.rank, Number(query.rank)) : undefined,
-      );
+    columns: {
+      id: true,
+      name: true,
+      season: true,
+      rank: true,
+    },
+
+    where: {
+      OR: [
+        { id: query.id ? Number(query.id) : undefined },
+        { name: query.name ? query.name : undefined },
+        { season: query.season ? query.season : undefined },
+      ],
     },
   });
 
