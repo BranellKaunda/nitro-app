@@ -1,12 +1,25 @@
 import { defineHandler } from "nitro";
-import { matches } from "~/server/database/schema";
 import { useDrizzle } from "~/server/utils/drizzle";
-import { eq } from "drizzle-orm";
 
 export default defineHandler(async (event) => {
-  const id = event.context.params?.id;
+  const results = await useDrizzle().query.matches.findFirst({
+    columns: {
+      id: true,
+      matchDate: true,
+      status: true,
+      homeTeamGoals: true,
+      awayTeamGoals: true,
+    },
+    with: {
+      homeTeam: true,
+      awayTeam: true,
+      competition: true,
+    },
 
-  return await useDrizzle().query.matches.findFirst({
-    where: eq(matches.id, Number(id)),
+    where: {
+      id: Number(event.context.params!.id),
+    },
   });
+
+  return results;
 });

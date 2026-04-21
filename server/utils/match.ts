@@ -13,7 +13,7 @@ export default async function createMatch(
 
   //Finding home team
   const home = await db.query.teams.findFirst({
-    where: (t, { eq }) => eq(t.name, homeTeam),
+    where: { name: homeTeam },
   });
 
   if (!home) {
@@ -22,7 +22,7 @@ export default async function createMatch(
 
   // 2. Finding away team
   const away = await db.query.teams.findFirst({
-    where: (t, { eq }) => eq(t.name, awayTeam),
+    where: { name: awayTeam },
   });
 
   if (!away) {
@@ -31,13 +31,12 @@ export default async function createMatch(
 
   //if match already exists (same teams + same date)
   const existingMatch = await db.query.matches.findFirst({
-    where: (m, { eq, and }) =>
-      and(
-        eq(m.homeTeamId, home.id),
-        eq(m.awayTeamId, away.id),
-        eq(m.matchDate, matchDate),
-        eq(m.competitionId, competitionId),
-      ),
+    where: {
+      homeTeamId: home.id,
+      awayTeamId: away.id,
+      matchDate: matchDate,
+      competitionId: competitionId,
+    },
   });
 
   if (existingMatch) {

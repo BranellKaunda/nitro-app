@@ -14,7 +14,7 @@ type MatchRecord = {
 
 export default defineHandler(async (event) => {
   // 1. file path
-  const filePath = path.join(process.cwd(), "data", `2025season.csv`);
+  const filePath = path.join(process.cwd(), "data", `2022season.csv`);
 
   // 2. Read file as text
   const fileContent = fs.readFileSync(filePath, "utf8");

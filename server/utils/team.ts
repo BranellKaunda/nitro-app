@@ -6,7 +6,7 @@ export default async function createTeam(name: string) {
 
   let created = false;
   let team = await db.query.teams.findFirst({
-    where: (teams, { eq }) => eq(teams.name, name),
+    where: { name: name },
   });
 
   if (!team) {
